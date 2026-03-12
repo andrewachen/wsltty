@@ -15,6 +15,7 @@ jobs:
             mingw-w64-clang-aarch64-dlfcn
             make
             git
+            diffutils
 
       - name: Build
         shell: msys2 {0}

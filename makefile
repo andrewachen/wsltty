@@ -366,8 +366,8 @@ mintty-git-msys2:
 	cp $(minttydir_msys2)/icon/terminal.ico mintty.ico
 
 mintty-build-msys2:
-	# build mintty for CLANGARM64
-	cd $(minttydir_msys2)/src; make $(wslversion)
+	# build mintty for CLANGARM64 (TARGET must be explicit; uname -m reports x86_64 in MSYS2 CLANGARM64)
+	cd $(minttydir_msys2)/src; make TARGET=Msys-aarch64 $(wslversion)
 	mkdir -p bin
 	cp $(minttydir_msys2)/bin/mintty.exe bin/
 
