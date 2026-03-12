@@ -106,6 +106,8 @@ else ifeq ($(TARGET), x86_64-pc-msys)
   sys := msys64
 else ifeq ($(TARGET), aarch64-w64-mingw32)
   sys := clangarm64
+else ifeq ($(TARGET), aarch64-w64-windows-gnu)
+  sys := clangarm64
 else
   $(error Target '$(TARGET)' not supported)
 endif
