@@ -17,6 +17,11 @@ minttyver=3.8.0
 
 minrepo=git@github.com:mintty/mintty.git
 
+# fork repo and branch for ARM64/CLANGARM64 native build
+minrepo_msys2=https://github.com/andrewachen/mintty.git
+minttyver_msys2=msys2
+minttydir_msys2=mintty-msys2
+
 ##############################
 # wsltty appx release (obsolete) - must have 4 parts!
 appxver=$(wslttyver).1
@@ -99,6 +104,8 @@ else ifeq ($(TARGET), i686-pc-msys)
   sys := msys32
 else ifeq ($(TARGET), x86_64-pc-msys)
   sys := msys64
+else ifeq ($(TARGET), aarch64-w64-mingw32)
+  sys := clangarm64
 else
   $(error Target '$(TARGET)' not supported)
 endif
@@ -350,6 +357,20 @@ installbat:
 
 ver:
 	echo $(wslttyver) > VERSION
+
+mintty-git-msys2:
+	test -d $(minttydir_msys2) || git clone --branch $(minttyver_msys2) --depth 1 $(minrepo_msys2) $(minttydir_msys2)
+	cd $(minttydir_msys2); git checkout $(minttyver_msys2)
+	cp $(minttydir_msys2)/icon/terminal.ico mintty.ico
+
+mintty-build-msys2:
+	# build mintty for CLANGARM64
+	cd $(minttydir_msys2)/src; make $(wslversion)
+	mkdir -p bin
+	cp $(minttydir_msys2)/bin/mintty.exe bin/
+
+# ARM64 native build — clones fork/msys2 branch, builds with CLANGARM64 toolchain
+msys2:	mintty-git-msys2 mintty-build-msys2
 
 mintty:	mintty-get mintty-build
 
