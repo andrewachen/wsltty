@@ -34,12 +34,12 @@ jobs:
         shell: msys2 {0}
         run: |
           mkdir -p pkg
-          cp bin/mintty.exe             pkg/
-          cp install-arm64.bat          pkg/
-          cp config-distros-arm64.ps1   pkg/
+          cp bin/mintty.exe           pkg/
+          cp install.bat              pkg/
+          cp config-distros-arm64.ps1 pkg/
           cp dequote.bat cmd2.bat uninstall.bat mkshortcut.vbs pkg/
-          cp tux.ico LICENSE.mintty VERSION  pkg/
-          cp "wsltty home & help.url"   pkg/
+          cp tux.ico LICENSE.mintty VERSION pkg/
+          cp "wsltty home & help.url" pkg/
 
       - uses: actions/upload-artifact@v4
         with:

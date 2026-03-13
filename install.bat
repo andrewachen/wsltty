@@ -27,6 +27,10 @@ set configdir=%arg2%
 
 :deploy
 
+rem ARM64 native install: no Cygwin tools, no wslbridge2, PowerShell for distro config
+set arm64=false
+if "%PROCESSOR_ARCHITECTURE%" == "ARM64" set arm64=true
+
 mkdir "%installdir%" 2> nul:
 
 rem clean up previous installation artefacts
@@ -34,6 +38,9 @@ del /Q "%installdir%\*.bat"
 del /Q "%installdir%\*.lnk"
 
 copy LICENSE.mintty "%installdir%"
+if "%arm64%" == "true" goto assets_arm64
+
+rem x86/x64: wslbridge2 license and Cygwin-based shortcut scripts
 copy LICENSE.wslbridge2 "%installdir%"
 
 copy "add to context menu.lnk" "%installdir%"
@@ -43,7 +50,13 @@ copy "configure WSL shortcuts.lnk" "%installdir%"
 rem copy "WSL Terminal.lnk" "%installdir%"
 rem copy "WSL Terminal %%.lnk" "%installdir%"
 copy config-distros.sh "%installdir%"
+goto assets_common
 
+:assets_arm64
+rem ARM64: PowerShell shortcut configurator
+copy config-distros-arm64.ps1 "%installdir%"
+
+:assets_common
 copy mkshortcut.vbs "%installdir%"
 copy cmd2.bat "%installdir%"
 copy dequote.bat "%installdir%"
@@ -56,15 +69,23 @@ copy uninstall.bat "%installdir%"
 if not exist "%installdir%\bin" goto instbin
 rem move previous programs possibly in use out of the way
 del /Q "%installdir%\bin\*.old" 2> nul:
+if "%arm64%" == "true" goto rename_arm64
 ren "%installdir%\bin\cygwin1.dll" cygwin1.dll.old
 ren "%installdir%\bin\cygwin-console-helper.exe" cygwin-console-helper.exe.old
 ren "%installdir%\bin\mintty.exe" mintty.exe.old
 ren "%installdir%\bin\wslbridge2.exe" wslbridge2.exe.old
 ren "%installdir%\bin\wslbridge2-backend" wslbridge2-backend.old
+goto rename_done
+:rename_arm64
+ren "%installdir%\bin\mintty.exe" mintty.exe.old
+:rename_done
 del /Q "%installdir%\bin\*.old" 2> nul:
 
 :instbin
 mkdir "%installdir%\bin" 2> nul:
+if "%arm64%" == "true" goto instbin_arm64
+
+rem x86/x64 binaries
 copy cygwin1.dll "%installdir%\bin"
 copy cygwin-console-helper.exe "%installdir%\bin"
 copy mintty.exe "%installdir%\bin"
@@ -98,6 +119,14 @@ copy getflags "%installdir%\usr\share\mintty\emojis" 2> nul:
 mkdir "%installdir%\usr\share\terminfo" 2> nul:
 copy terminfo.zoo "%installdir%\usr\share\terminfo"
 
+goto themes_done
+
+:instbin_arm64
+rem ARM64: just mintty.exe, no Cygwin or wslbridge2
+copy mintty.exe "%installdir%\bin"
+
+:themes_done
+
 
 rem create Start Menu Folder
 set smf="%APPDATA%\Microsoft\Windows\Start Menu\Programs\WSLtty"
@@ -108,6 +137,7 @@ rem clean up previous installation
 del /Q "%smf%\*.lnk"
 
 copy "wsltty home & help.url" "%smf%"
+if "%arm64%" == "true" goto smf_done
 copy "add to context menu.lnk" "%smf%"
 copy "add default to context menu.lnk" "%smf%"
 copy "remove from context menu.lnk" "%smf%"
@@ -127,6 +157,8 @@ cd /D "%installdir%\usr\share\mintty\sounds"
 cd /D "%installdir%\usr\share\terminfo"
 "%installdir%\bin\zoo" xO terminfo
 cd /D "%installdir%"
+
+:smf_done
 
 
 :migrate configuration
@@ -152,8 +184,10 @@ mkdir "%configdir%\lang" 2> nul:
 mkdir "%configdir%\themes" 2> nul:
 mkdir "%configdir%\sounds" 2> nul:
 mkdir "%configdir%\emojis" 2> nul:
+if "%arm64%" == "true" goto emojis_done
 copy "%installdir%\usr\share\mintty\emojis\getemojis" "%configdir%\emojis" 2> nul:
 copy "%installdir%\usr\share\mintty\emojis\getflags" "%configdir%\emojis" 2> nul:
+:emojis_done
 
 goto noetc
 rem 3.8.0.2: create global config file for troubleshooting
@@ -187,8 +221,14 @@ if "%3" == "/P" goto end
 rem distro-specific stuff: shortcuts and launch scripts
 cd /D "%installdir%"
 echo Configuring for WSL distributions
+if "%arm64%" == "true" goto distros_arm64
+
 bin\dash.exe "config-distros.sh"
 rem rem bin\dash.exe "config-distros.sh" -contextmenu
+goto end
+
+:distros_arm64
+powershell -ExecutionPolicy Bypass -File config-distros-arm64.ps1
 
 
 :end

@@ -378,14 +378,14 @@ msys2:	mintty-git-msys2 mintty-build-msys2
 msys2-stage:	msys2
 	mkdir -p rel
 	cp bin/mintty.exe rel/
-	cp install-arm64.bat config-distros-arm64.ps1 rel/
+	cp install.bat config-distros-arm64.ps1 rel/
 	cp dequote.bat cmd2.bat uninstall.bat mkshortcut.vbs rel/
 	cp tux.ico LICENSE.mintty VERSION rel/
 	cp "wsltty home & help.url" rel/
 
-# Install ARM64 wsltty locally (builds, stages, then runs PowerShell config)
+# Install ARM64 wsltty locally (builds, stages, then runs the unified installer)
 msys2-install:	msys2-stage
-	cd rel; cmd /C install-arm64
+	cd rel; cmd /C install
 
 mintty:	mintty-get mintty-build
 
