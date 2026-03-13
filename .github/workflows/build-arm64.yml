@@ -40,8 +40,17 @@ jobs:
           cp dequote.bat cmd2.bat uninstall.bat mkshortcut.vbs pkg/
           cp tux.ico LICENSE.mintty VERSION pkg/
           cp "wsltty home & help.url" pkg/
+          cp makewinx-arm64.cfg       pkg/
+
+      - name: Build installer
+        shell: msys2 {0}
+        run: |
+          version=$(cat VERSION)
+          cd pkg
+          sed -e "s,%version%,$version," makewinx-arm64.cfg > wsltty-arm64.SED
+          iexpress /n /q wsltty-arm64.SED
 
       - uses: actions/upload-artifact@v4
         with:
           name: wsltty-arm64
-          path: pkg/
+          path: pkg/wsltty-*-arm64-install.exe
