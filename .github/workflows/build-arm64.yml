@@ -21,6 +21,12 @@ jobs:
         shell: msys2 {0}
         run: make msys2
 
+      - name: Smoke test
+        shell: msys2 {0}
+        run: |
+          bin/mintty.exe --version
+          bin/mintty.exe --help
+
       - uses: actions/upload-artifact@v4
         with:
           name: mintty-arm64
