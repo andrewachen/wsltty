@@ -30,7 +30,18 @@ jobs:
           bin/mintty.exe -e cmd /c exit 0
           echo "ConPTY spawn+exit OK"
 
+      - name: Package
+        shell: msys2 {0}
+        run: |
+          mkdir -p pkg
+          cp bin/mintty.exe             pkg/
+          cp install-arm64.bat          pkg/
+          cp config-distros-arm64.ps1   pkg/
+          cp dequote.bat cmd2.bat uninstall.bat mkshortcut.vbs pkg/
+          cp tux.ico LICENSE.mintty VERSION  pkg/
+          cp "wsltty home & help.url"   pkg/
+
       - uses: actions/upload-artifact@v4
         with:
-          name: mintty-arm64
-          path: bin/mintty.exe
+          name: wsltty-arm64
+          path: pkg/
