@@ -231,7 +231,7 @@ appex () {
 		for item in $line
 		do	case "$item" in
 			Executable=*)
-				eval $item
+				Executable="${item#Executable=}"
 				echo "$Executable"
 				break;;
 			esac
@@ -246,7 +246,7 @@ config () {
   ok=false
   case $guid in
   {*)
-    distro=`regtool get "$lxss/$guid/DistributionName"`
+    distro=`regtool get "$lxss/$guid/DistributionName" | sed 's/[^A-Za-z0-9._ -]//g'`
     case "$distro" in
     Legacy)
     	name="Bash on Windows"

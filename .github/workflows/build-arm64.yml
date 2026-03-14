@@ -47,8 +47,9 @@ jobs:
         shell: msys2 {0}
         run: |
           version=$(cat VERSION)
+          version_safe=$(printf '%s\n' "$version" | sed 's/[&\]/\\&/g')
           cd pkg
-          sed -e "s,%version%,$version," -e "s/^InstallPrompt=.*/InstallPrompt=/" makewinx-arm64.cfg > wsltty-arm64.SED
+          sed -e "s,%version%,$version_safe," -e "s/^InstallPrompt=.*/InstallPrompt=/" makewinx-arm64.cfg > wsltty-arm64.SED
           iexpress /n /q wsltty-arm64.SED
 
       - uses: actions/upload-artifact@v4
