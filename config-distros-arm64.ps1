@@ -32,7 +32,8 @@ function Make-Shortcut($path, $tgt, $args, $icon) {
 function Make-Launcher($batPath, $distro, $home) {
     # Use env var references so the .bat works from any install location
     $cdir    = if ($home) { ' -~' } else { '' }
-    $distArg = if ($distro) { $distro } else { '' }
+    # Sanitize: strip chars that are special in bat command lines (", &, |, ^, %, etc.)
+    $distArg = $distro -replace '[^A-Za-z0-9._\- ]', ''
     $content = @"
 @echo off
 chcp 65001 > nul:
@@ -91,9 +92,12 @@ foreach ($d in $distros) {
     $args0  = "--WSL=`"$distro`" --configdir=`"%APPDATA%\wsltty`""
 
     if ($ContextMenu) {
-        $base    = 'HKCU:\Software\Classes\Directory'
-        $keyName = "${name}_Terminal"
-        $cmdStr  = "`"$target`" -i `"$icon`" --dir `"%1`" $args0 -"
+        $base       = 'HKCU:\Software\Classes\Directory'
+        $keyName    = "${name}_Terminal"
+        # Build cmd string with sanitized distro name — the value is executed by cmd.exe
+        $distroSafe = $distro -replace '[^A-Za-z0-9._\- ]', ''
+        $args0safe  = "--WSL=`"$distroSafe`" --configdir=`"%APPDATA%\wsltty`""
+        $cmdStr     = "`"$target`" -i `"$icon`" --dir `"%1`" $args0safe -"
 
         if ($Remove) {
             Remove-Item "$base\shell\$keyName"            -Recurse -ErrorAction SilentlyContinue
