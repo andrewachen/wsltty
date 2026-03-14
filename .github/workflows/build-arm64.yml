@@ -50,7 +50,11 @@ jobs:
           version=$(cat VERSION)
           version_safe=$(printf '%s\n' "$version" | sed 's/[&\]/\\&/g')
           cd pkg
-          sed -e "s,%version%,$version_safe," -e "s/^InstallPrompt=.*/InstallPrompt=/" -e "s/^FinishMessage=.*/FinishMessage=/" makewinx-arm64.cfg > wsltty-arm64.SED
+          sed -e "s,%version%,$version_safe," \
+              -e "s/^InstallPrompt=.*/InstallPrompt=/" \
+              -e "s/^FinishMessage=.*/FinishMessage=/" \
+              -e "s/^HideExtractAnimation=.*/HideExtractAnimation=1/" \
+              makewinx-arm64.cfg > wsltty-arm64.SED
           iexpress /n /q wsltty-arm64.SED
 
       - uses: actions/upload-artifact@v4
