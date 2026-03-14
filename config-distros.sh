@@ -252,7 +252,7 @@ config () {
     	name="Bash on Windows"
     	launcher="$SYSTEMROOT/System32/bash.exe"
     	;;
-    *)	name="$distro"
+    *)	name=`printf '%s' "$distro" | sed 's/[^A-Za-z0-9._ -]//g'`
     	launcher="$LOCALAPPDATA/Microsoft/WindowsApps/$distro.exe"
     	;;
     esac
