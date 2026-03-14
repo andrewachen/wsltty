@@ -86,7 +86,7 @@ if (!$DefaultOnly -and (Test-Path $lxss)) {
 $distros += @{ Name = 'WSL'; Distro = ''; Icon = $defaultIcon }
 
 foreach ($d in $distros) {
-    $name   = $d.Name
+    $name   = $d.Name   -replace '[^A-Za-z0-9._\- ]', ''
     $distro = $d.Distro
     $icon   = $d.Icon
     $args0  = "--WSL=`"$distro`" --configdir=`"%APPDATA%\wsltty`""
