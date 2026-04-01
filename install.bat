@@ -230,5 +230,5 @@ goto end
 :distros_arm64
 powershell -ExecutionPolicy Bypass -File config-distros-arm64.ps1
 
-
 :end
+if "%arm64%" == "true" pause
