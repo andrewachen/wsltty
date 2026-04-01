@@ -6,7 +6,7 @@ jobs:
     runs-on: windows-11-arm
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -61,7 +61,7 @@ jobs:
         working-directory: pkg
         run: iexpress /n /q wsltty-arm64.SED
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wsltty-arm64
           path: pkg/wsltty-*-arm64-install.exe
