@@ -19,19 +19,19 @@ if (!(Test-Path $smfolder)) { New-Item -ItemType Directory -Path $smfolder | Out
 
 $wsh = New-Object -ComObject WScript.Shell
 
-function Make-Shortcut($path, $tgt, $args, $icon) {
+function Make-Shortcut($path, $tgt, $argstr, $icon) {
     $lnk = $wsh.CreateShortcut($path)
     $lnk.TargetPath       = $tgt
-    $lnk.Arguments        = $args
+    $lnk.Arguments        = $argstr
     $lnk.IconLocation     = $icon
     $lnk.WorkingDirectory = '%USERPROFILE%'
     $lnk.Save()
     Write-Host "Created $([System.IO.Path]::GetFileName($path))"
 }
 
-function Make-Launcher($batPath, $distro, $home) {
+function Make-Launcher($batPath, $distro, $startHome) {
     # Use env var references so the .bat works from any install location
-    $cdir    = if ($home) { ' -~' } else { '' }
+    $cdir    = if ($startHome) { ' -~' } else { '' }
     # Sanitize: strip chars that are special in bat command lines (", &, |, ^, %, etc.)
     $distArg = $distro -replace '[^A-Za-z0-9._\- ]', ''
     $content = @"
