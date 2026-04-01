@@ -34,8 +34,8 @@ if "%PROCESSOR_ARCHITECTURE%" == "ARM64" set arm64=true
 mkdir "%installdir%" 2> nul:
 
 rem clean up previous installation artefacts
-del /Q "%installdir%\*.bat"
-del /Q "%installdir%\*.lnk"
+del /Q "%installdir%\*.bat" 2> nul:
+del /Q "%installdir%\*.lnk" 2> nul:
 
 copy LICENSE.mintty "%installdir%"
 if "%arm64%" == "true" goto assets_arm64
@@ -124,6 +124,13 @@ goto themes_done
 :instbin_arm64
 rem ARM64: just mintty.exe, no Cygwin or wslbridge2
 copy mintty.exe "%installdir%\bin"
+if errorlevel 1 (
+  echo.
+  echo ERROR: Could not copy mintty.exe — is it still running?
+  echo Please close all wsltty/mintty windows and run the installer again.
+  pause
+  goto end
+)
 
 :themes_done
 
