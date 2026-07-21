@@ -14,4 +14,4 @@ docker run --rm \
   -v "$MINTTY_LOCAL:/mintty" \
   -w /work \
   dockcross/windows-arm64 \
-  bash -c "cd /mintty/src && make -j\$(nproc) TARGET=Msys-aarch64 CC=aarch64-w64-mingw32-clang RC=aarch64-w64-mingw32-windres 2>&1"
+  bash -c "cd /mintty/src && make -j\$(nproc) TARGET=Msys-aarch64 CC=aarch64-w64-mingw32-clang RC=aarch64-w64-mingw32-windres ARM_MCPU= 2>&1"
